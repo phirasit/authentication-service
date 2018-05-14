@@ -4,10 +4,9 @@ FROM node
 COPY . /src 
 
 # Install app dependencies
-RUN cd /src;
+WORKDIR /src
 RUN npm install
 
 EXPOSE  8080
-WORKDIR /src
 
 CMD ["npm", "start"]
