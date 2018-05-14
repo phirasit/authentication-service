@@ -18,7 +18,7 @@ node {
          * For this example, we're using a Volkswagen-type approach ;-) */
 
         app.inside {
-            sh 'echo "All tests passed"'
+            sh 'npm start'
         }
     }
 
