@@ -1,0 +1,6 @@
+node_modules/
+
+package-lock.json
+mongo-api.key
+server.crt
+server.key
