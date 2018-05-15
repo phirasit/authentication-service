@@ -1,8 +1,14 @@
 const express = require('express');
 const router = express();
 const app = express();
+
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const path = require('path');
+
+// set cookie
+const cookieName = "jwt-token";
 
 // get certificate
 const fs = require('fs');
@@ -15,6 +21,7 @@ const cert = {
 // time configuration
 const tokenTimeLimit = parseInt(process.env.TOKEN_TIME_LIMIT) || (60 * 30);
 
+router.use(cookieParser());
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 
@@ -58,6 +65,8 @@ router.post("/login", (req, res) => {
 					expiresIn: tokenTimeLimit,
 				},
 			);
+			
+			res.cookie(cookieName, token);
 
 			res.json({
 				success: 1,
@@ -123,7 +132,6 @@ router.post("/register", (req, res) => {
 // update password
 router.post("/update", (req, res) => {
 
-
 	const data = req.body;
 	if (!data) {
 		res.json({ success: 0, message: "No data", });
@@ -160,6 +168,47 @@ router.post("/update", (req, res) => {
 });
 
 const serverPort = process.env.SERVER_PORT || "8080";
+
+app.use(cookieParser());
+
+app.get('/', (req, res) => {
+	var token = req.cookies[cookieName];
+	if (token == null) {
+		res.sendFile(path.join(__dirname, "static_page/main.html"));
+	} else {
+		verify_jwt(token, (error, decoded) => {
+			if (error) {
+				res.redirect("/logout");
+			} else {
+				res.sendFile(path.join(__dirname, "static_page/success.html"));
+			}
+		});
+	}
+});
+
+app.get('/register', (req, res) => {
+	var token = req.cookies[cookieName];
+	if (token == null) {
+		res.sendFile(path.join(__dirname, "static_page/register.html"));
+	} else {
+		verify_jwt(token, (error, decoded) => {
+			if (error) {
+				res.redirect("/logout");
+			} else {
+				res.sendFile(path.join(__dirname, "static_page/success.html"));
+			}
+		});
+	}
+});
+
+app.get('/login', (req, res) => {
+	res.redirect("/");
+});
+
+app.get('/logout', (req, res) => {
+	res.clearCookie(cookieName);
+	res.redirect('/');
+});
 
 app.use('/api', router);
 
