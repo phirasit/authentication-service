@@ -38,7 +38,7 @@ clientPromise.then(client => {
 
 function init(callback) {
 
-	mongoClient.connect(mongo_url, function(err, db) {
+	mongoClient.connect(mongo_url, { useNewUrlParser: true }, function(err, db) {
 
 		console.log("[MongoDB] Connected to database : " + mongo_url);
 

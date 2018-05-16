@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express();
+const ui = express();
 const app = express();
 
 const jwt = require('jsonwebtoken');
@@ -87,6 +88,10 @@ router.post("/verify", (req, res) => {
 	
 	const data = req.body;
 
+	if (!data.token && req.cookies[cookieName]) {
+		data.token = req.cookies[cookieName];
+	}
+
 	if (!data.token) {
 		res.json({ valid: 0, message: "No jwt token", });
 		return;
@@ -164,14 +169,11 @@ router.post("/update", (req, res) => {
 			}
 		});
 	}
-	
 });
 
-const serverPort = process.env.SERVER_PORT || "8080";
+ui.use(cookieParser());
 
-app.use(cookieParser());
-
-app.get('/', (req, res) => {
+ui.get('/', (req, res) => {
 	var token = req.cookies[cookieName];
 	if (token == null) {
 		res.sendFile(path.join(__dirname, "static_page/main.html"));
@@ -186,7 +188,7 @@ app.get('/', (req, res) => {
 	}
 });
 
-app.get('/register', (req, res) => {
+ui.get('/register', (req, res) => {
 	var token = req.cookies[cookieName];
 	if (token == null) {
 		res.sendFile(path.join(__dirname, "static_page/register.html"));
@@ -201,16 +203,19 @@ app.get('/register', (req, res) => {
 	}
 });
 
-app.get('/login', (req, res) => {
-	res.redirect("/");
+ui.get('/login', (req, res) => {
+	res.redirect("/auth");
 });
 
-app.get('/logout', (req, res) => {
+ui.get('/logout', (req, res) => {
 	res.clearCookie(cookieName);
 	res.redirect('/');
 });
 
-app.use('/api', router);
+app.use('/auth', ui);
+app.use('/api/auth', router);
+
+const serverPort = process.env.SERVER_PORT || "8080";
 
 app.listen(serverPort, () => {
 	console.log("listening to : " + serverPort);
