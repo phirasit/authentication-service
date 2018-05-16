@@ -3,6 +3,8 @@ const router = express();
 const ui = express();
 const app = express();
 
+ui.set('view engine', 'ejs');
+
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -77,7 +79,7 @@ router.post("/login", (req, res) => {
 		} else {
 
 			res.json({
-				success: 1,
+				success: 0,
 				message: "Invalid Credential",
 			});
 		}
@@ -112,9 +114,9 @@ router.post("/register", (req, res) => {
 	const data = req.body;
 	if (data == undefined) {
 		res.json({ success: 0, message: "No data", });
-	} else if (data.username == undefined) {
+	} else if (data.username == undefined || data.username == "") {
 		res.json({ success: 0, message: "No username", });
-	} else if (data.password == undefined) {
+	} else if (data.password == undefined || data.password == "") {
 		res.json({ success: 0, message: "No password", });
 	} else {
 		db.hasUser(data.username, result => {
@@ -180,9 +182,11 @@ ui.get('/', (req, res) => {
 	} else {
 		verify_jwt(token, (error, decoded) => {
 			if (error) {
-				res.redirect("/logout");
+				res.redirect("/auth/logout");
 			} else {
-				res.sendFile(path.join(__dirname, "static_page/success.html"));
+				res.render(path.join(__dirname, "static_page/success.ejs"), {
+					name: decoded.username,
+				});
 			}
 		});
 	}
@@ -193,26 +197,20 @@ ui.get('/register', (req, res) => {
 	if (token == null) {
 		res.sendFile(path.join(__dirname, "static_page/register.html"));
 	} else {
-		verify_jwt(token, (error, decoded) => {
-			if (error) {
-				res.redirect("/logout");
-			} else {
-				res.sendFile(path.join(__dirname, "static_page/success.html"));
-			}
-		});
+		res.redirect('/auth/');
 	}
 });
 
 ui.get('/login', (req, res) => {
-	res.redirect("/auth");
+	res.redirect("/auth/");
 });
 
 ui.get('/logout', (req, res) => {
 	res.clearCookie(cookieName);
-	res.redirect('/');
+	res.redirect('/auth/');
 });
 
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, "README.md")));
+app.get('/', (req, res) => res.sendStatus(200));
 
 app.use('/auth', ui);
 app.use('/api/auth', router);

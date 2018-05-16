@@ -106,7 +106,7 @@ body {
 		var pass = document.getElementById('pass').value;
 
 		var xhr = new XMLHttpRequest();
-		var url = "/api/login";
+		var url = "/api/auth/login";
 
 		xhr.open("POST", url, true);
 		xhr.setRequestHeader("Content-Type", "application/json");
@@ -116,29 +116,23 @@ body {
 	      var res = JSON.parse(xhr.responseText);
 	      if (res.success) {
 	      	location.reload();
+	      } else {
+	      	document.getElementById('response').innerHTML = res.message;
 	      }
-	    } else {
-	      console.log(xhr.status);
-	    }
-		};
+	    } 
+	  };
 		var data = JSON.stringify({username: user, password: pass});
 		xhr.send(data);
 	}
 </script>
 <div class="login-page">
   <div class="form">
-    <form class="register-form">
-      <input type="text" placeholder="name"/>
-      <input type="password" placeholder="password"/>
-      <input type="text" placeholder="email address"/>
-      <button>create</button>
-      <p class="message">Already registered? <a onclick="show_login"> href="#">Sign In</a></p>
-    </form>
     <form class="login-form" action="#">
       <input id='user' type="text" placeholder="username"/>
       <input id='pass' type="password" placeholder="password"/>
       <button onclick='login();'>login</button>
-      <p class="message">Not registered? <a href="/register">Create an account</a></p>
+      <p class="message">Not registered? <a href="/auth/register">Create an account</a></p>
+      <p id='response' class="message" style='color:red;'></p>
     </form>
   </div>
 </div>

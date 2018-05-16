@@ -100,36 +100,11 @@ body {
   -moz-osx-font-smoothing: grayscale;      
 }
 </style>
-<script type='text/javascript'>
-	function login() {
-		var user = document.getElementById('user').value;
-		var pass = document.getElementById('pass').value;
-
-		var xhr = new XMLHttpRequest();
-		var url = "/api/login";
-
-		xhr.open("POST", url, true);
-		xhr.setRequestHeader("Content-Type", "application/json");
-		xhr.onreadystatechange = function () {
-			
-	    if (xhr.readyState === 4 && xhr.status === 200) {
-	      var res = JSON.parse(xhr.responseText);
-	      if (res.success) {
-	      	location.reload();
-	      }
-	    } else {
-	      console.log(xhr.status);
-	    }
-		};
-		var data = JSON.stringify({username: user, password: pass});
-		xhr.send(data);
-	}
-</script>
 <div class="login-page">
   <div class="form">
     <form class="login-form" action="#">
-    	<label> Already login </label>
-    	<p class="message"><a href="/logout">Log Out </a></p>
+    	<label> Welcome, <b> <%= name %> </b></label>
+    	<p class="message"><a href="/auth/logout">Log Out </a></p>
     </form>
   </div>
 </div>
