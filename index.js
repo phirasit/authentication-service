@@ -171,7 +171,7 @@ const serverPort = process.env.SERVER_PORT || "8080";
 
 app.use(cookieParser());
 
-app.get('/', (req, res) => {
+app.get('/auth', (req, res) => {
 	var token = req.cookies[cookieName];
 	if (token == null) {
 		res.sendFile(path.join(__dirname, "static_page/main.html"));
@@ -186,7 +186,7 @@ app.get('/', (req, res) => {
 	}
 });
 
-app.get('/register', (req, res) => {
+app.get('/auth/register', (req, res) => {
 	var token = req.cookies[cookieName];
 	if (token == null) {
 		res.sendFile(path.join(__dirname, "static_page/register.html"));
@@ -201,16 +201,16 @@ app.get('/register', (req, res) => {
 	}
 });
 
-app.get('/login', (req, res) => {
-	res.redirect("/");
+app.get('/auth/login', (req, res) => {
+	res.redirect("/auth");
 });
 
-app.get('/logout', (req, res) => {
+app.get('/auth/logout', (req, res) => {
 	res.clearCookie(cookieName);
 	res.redirect('/');
 });
 
-app.use('/api', router);
+app.use('/auth/api', router);
 
 app.listen(serverPort, () => {
 	console.log("listening to : " + serverPort);
