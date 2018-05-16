@@ -5,7 +5,7 @@ Written by Phirasit Charoenchitseriwong
 list of all APIs in this service  
 Note: all APIs use JSON  
 
-## 1. /api/login
+## 1. /auth/api/login
 Try to authenticate, create jwt token if the request is granted
 
 #### Parameters
@@ -21,7 +21,7 @@ Name | Type | Note
 success | Bool |
 message | String | jwt token
 	
-## 2. /api/verify
+## 2. /auth/api/verify
 verify jwt token
 #### Parameters
 Name | Type | Note
@@ -34,7 +34,7 @@ Name | Type | Note
 valid | Bool | 
 message | Object | user data
 
-## 3. /api/register
+## 3. /auth/api/register
 register a new user
 #### Parameters
 Name | Type | Note
@@ -48,7 +48,7 @@ Name | Type | Note
 success | Bool |
 message | String |
 
-## 4. /api/update
+## 4. /auth/api/update
 update user password
 #### Parameters
 Name | Type | Note
